@@ -5,5 +5,5 @@ abstract class SocialAuthDataSource {
 
   Future<UserModel> signInWithApple();
 
-  Future<UserModel> signInWithGitHub();
+  Future<void> signInWithGitHub();
 }

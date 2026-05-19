@@ -1,5 +1,5 @@
 import 'package:auth_flow_app/core/error/exceptions.dart';
-import 'package:auth_flow_app/features/auth/data/datasources/auth_client.dart';
+import 'package:auth_flow_app/core/network/supabase/auth_client.dart';
 import 'package:auth_flow_app/features/auth/data/datasources/email_auth_datasource.dart';
 import 'package:auth_flow_app/features/auth/data/models/user_model.dart';
 
@@ -12,10 +12,18 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
   Future<UserModel> signUpWithEmail({
     required String email,
     required String password,
+    required String name,
   }) async {
     try {
-      // TODO: Implement signUpWithEmail
-      throw UnimplementedError('signUpWithEmail not implemented yet');
+      final response = await _authClient.signUp(
+        email: email,
+        password: password,
+        name: name,
+      );
+      if (response.user == null) {
+        throw AuthException('Signup Failed - No user returned');
+      }
+      return UserModel.fromSupabaseUser(response.user!);
     } on AuthException {
       rethrow;
     } catch (e) {
@@ -29,8 +37,11 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
     required String password,
   }) async {
     try {
-      // TODO: Implement signInWithEmail
-      throw UnimplementedError('signInWithEmail not implemented yet');
+      final response = await _authClient.signIn(email: email, password: password);
+      if (response.user == null) {
+        throw AuthException('SignIn Failed - Invalid credentials');
+      }
+      return UserModel.fromSupabaseUser(response.user!);
     } on AuthException {
       rethrow;
     } catch (e) {
@@ -41,8 +52,7 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
   @override
   Future<void> resetPassword({required String email}) async {
     try {
-      // TODO: Implement resetPassword
-      throw UnimplementedError('resetPassword not implemented yet');
+      await _authClient.resetPasswordForEmail(email: email);
     } on AuthException {
       rethrow;
     } catch (e) {
@@ -51,10 +61,16 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
   }
 
   @override
-  Future<void> verifyEmail({required String token}) async {
+  Future<UserModel> verifyPasswordResetOtp({
+    required String email,
+    required String otp,
+  }) async {
     try {
-      // TODO: Implement verifyEmail
-      throw UnimplementedError('verifyEmail not implemented yet');
+      final response = await _authClient.verifyPasswordResetOTP(email: email, otp: otp);
+      if (response.user == null) {
+        throw AuthException('Verification OTP Failed - Invalidate OTP or Expire');
+      }
+      return UserModel.fromSupabaseUser(response.user!);
     } on AuthException {
       rethrow;
     } catch (e) {
@@ -63,14 +79,20 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
   }
 
   @override
-  Future<void> sendMagicLink({required String email}) async {
+  Future<void> updatePassword({required String password}) async {
     try {
-      // TODO: Implement sendMagicLink
-      throw UnimplementedError('sendMagicLink not implemented yet');
+      await _authClient.updatePassword(password: password);
     } on AuthException {
       rethrow;
     } catch (e) {
-      throw ServerException('Failed to send magic link: ${e.toString()}');
+      throw ServerException('Failed to verify email: ${e.toString()}');
     }
   }
+
+  @override
+  Future<void> sendMagicLink({required String email}) {
+    // TODO: implement sendMagicLink
+    throw UnimplementedError();
+  }
+
 }

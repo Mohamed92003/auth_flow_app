@@ -1,4 +1,5 @@
 import 'package:auth_flow_app/features/auth/domain/entities/user_entity.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
@@ -10,6 +11,17 @@ class UserModel extends UserEntity {
     required super.isEmailVerified,
     required super.createdAt,
   });
+  factory UserModel.fromSupabaseUser(User user) {
+    return UserModel(
+      id: user.id,
+      email: user.email ?? '',
+      isEmailVerified: user.confirmationSentAt != null,
+      createdAt: DateTime.parse(user.createdAt),
+      displayName: user.userMetadata?['name'],
+      phoneNumber: user.phone,
+      photoUrl: user.userMetadata?['avatar_url'] ?? user.userMetadata?['photo'],
+    );
+  }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(

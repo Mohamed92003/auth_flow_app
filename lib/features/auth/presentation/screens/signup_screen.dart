@@ -27,12 +27,14 @@ class SignupView extends StatefulWidget {
 class _SignupViewState extends State<SignupView> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
+    _nameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -46,19 +48,13 @@ class _SignupViewState extends State<SignupView> {
         listener: (context, state) {
           if (state is EmailAuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
             );
           } else if (state is EmailAuthSuccess) {
             Navigator.of(context).pushReplacementNamed('/home');
-          } else if (state is EmailSent) {
+          } else if (state is PasswordResetOtpSent) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.green,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: Colors.green),
             );
           }
         },
@@ -89,6 +85,21 @@ class _SignupViewState extends State<SignupView> {
                       }
                       if (!value.contains('@')) {
                         return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Username';
                       }
                       return null;
                     },
@@ -139,6 +150,7 @@ class _SignupViewState extends State<SignupView> {
                           SignUpWithEmailEvent(
                             email: _emailController.text.trim(),
                             password: _passwordController.text,
+                            name: _nameController.text,
                           ),
                         );
                       }

@@ -7,5 +7,5 @@ abstract class SocialAuthRepository {
 
   Future<Either<Failure, UserEntity>> signInWithApple();
 
-  Future<Either<Failure, UserEntity>> signInWithGitHub();
+  Future<Either<Failure, void>> signInWithGitHub();
 }

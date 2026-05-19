@@ -25,6 +25,13 @@ class SocialAuthSuccess extends SocialAuthState {
   List<Object?> get props => [user];
 }
 
+class SocialAuthLaunched extends SocialAuthState {
+  const SocialAuthLaunched();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class SocialAuthError extends SocialAuthState {
   final String message;
 

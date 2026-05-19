@@ -51,7 +51,7 @@ class SocialAuthBloc extends Bloc<SocialAuthEvent, SocialAuthState> {
 
     result.fold(
       (failure) => emit(SocialAuthError(message: failure.message)),
-      (user) => emit(SocialAuthSuccess(user: user)),
+      (user) => emit(const SocialAuthLaunched()),
     );
   }
 }

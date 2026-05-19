@@ -1,5 +1,5 @@
 import 'package:auth_flow_app/core/error/exceptions.dart';
-import 'package:auth_flow_app/features/auth/data/datasources/auth_client.dart';
+import 'package:auth_flow_app/core/network/supabase/auth_client.dart';
 import 'package:auth_flow_app/features/auth/data/datasources/phone_auth_datasource.dart';
 import 'package:auth_flow_app/features/auth/data/models/user_model.dart';
 
@@ -11,8 +11,8 @@ class PhoneAuthDataSourceImpl implements PhoneAuthDataSource {
   @override
   Future<void> sendOTP({required String phoneNumber}) async {
     try {
-      // TODO: Implement sendOTP
-      throw UnimplementedError('sendOTP not implemented yet');
+     await _authClient.signInWithOtp(phoneNumber: phoneNumber);
+
     } on AuthException {
       rethrow;
     } catch (e) {
@@ -26,8 +26,11 @@ class PhoneAuthDataSourceImpl implements PhoneAuthDataSource {
     required String otpCode,
   }) async {
     try {
-      // TODO: Implement verifyOTP
-      throw UnimplementedError('verifyOTP not implemented yet');
+     final authResponse = await _authClient.verifyOtp(phoneNumber: phoneNumber, otp: otpCode);
+      if (authResponse.user == null) {
+        throw ServerException('Failed to verify OTP');
+      }
+      return UserModel.fromSupabaseUser(authResponse.user!);
     } on AuthException {
       rethrow;
     } catch (e) {

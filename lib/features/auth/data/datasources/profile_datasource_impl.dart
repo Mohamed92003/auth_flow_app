@@ -1,12 +1,10 @@
 import 'package:auth_flow_app/core/error/exceptions.dart';
-import 'package:auth_flow_app/features/auth/data/datasources/auth_client.dart';
 import 'package:auth_flow_app/features/auth/data/datasources/profile_datasource.dart';
 import 'package:auth_flow_app/features/auth/data/models/user_model.dart';
 
 class ProfileDataSourceImpl implements ProfileDataSource {
-  final AuthClient _authClient;
 
-  ProfileDataSourceImpl(this._authClient);
+  ProfileDataSourceImpl();
 
   @override
   Future<UserModel> updateProfile({
