@@ -27,4 +27,9 @@ abstract class AuthClient {
 
   Future<AuthResponse>verifyOtp({required String phoneNumber,required String otp});
 
+  User? get currentUser;
+
+  Future<void>signOut();
+  Stream<AuthState> get authStateChanges;
+
 }

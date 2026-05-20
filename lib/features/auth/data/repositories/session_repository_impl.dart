@@ -13,9 +13,9 @@ class SessionRepositoryImpl implements SessionRepository {
   }) : _sessionDataSource = sessionDataSource;
 
   @override
-  Future<Either<Failure, UserEntity?>> getCurrentUser() async {
+  Either<Failure, UserEntity?> getCurrentUser()  {
     try {
-      final user = await _sessionDataSource.getCurrentUser();
+      final user =  _sessionDataSource.getCurrentUser();
       return Right(user);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
