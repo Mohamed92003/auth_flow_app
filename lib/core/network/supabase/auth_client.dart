@@ -7,7 +7,10 @@ abstract class AuthClient {
     required String name,
   });
 
-  Future<AuthResponse> signIn({required String email, required String password});
+  Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  });
 
   Future<void> resetPasswordForEmail({required String email});
 
@@ -18,18 +21,24 @@ abstract class AuthClient {
 
   Future<UserResponse> updatePassword({required String password});
 
+  Future<AuthResponse> signInWithIdToken(
+    OAuthProvider provider,
+    String idToken,
+  );
 
-  Future<AuthResponse>signInWithIdToken(OAuthProvider provider , String idToken);
+  Future<bool> signInWithOAuth(OAuthProvider provider, String callbackUrl);
 
-  Future<bool>signInWithOAuth(OAuthProvider provider , String callbackUrl);
+  Future<void> signInWithOtp({required String phoneNumber});
 
-  Future<void>signInWithOtp({required String phoneNumber});
-
-  Future<AuthResponse>verifyOtp({required String phoneNumber,required String otp});
+  Future<AuthResponse> verifyOtp({
+    required String phoneNumber,
+    required String otp,
+  });
 
   User? get currentUser;
 
-  Future<void>signOut();
+  Future<void> signOut();
   Stream<AuthState> get authStateChanges;
 
+  Future<UserResponse> updateUser(UserAttributes attributes);
 }

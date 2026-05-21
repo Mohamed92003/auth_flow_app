@@ -1,5 +1,6 @@
 import 'package:auth_flow_app/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:auth_flow_app/features/auth/presentation/screens/phone_auth_screen.dart';
+import 'package:auth_flow_app/features/auth/presentation/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth_flow_app/core/di/injection_container.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const HomePage(),
           '/forgot-password': (context) => const ForgetPasswordPage(),
           '/phone-auth': (context) => const PhoneAuthPage(),
+          '/profile': (context) => const ProfilePage(),
         },
       ),
     );
@@ -61,9 +63,7 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, state) {
         if (state is SessionLoading || state is SessionInitial) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         } else if (state is Authenticated) {
           return const HomePage();

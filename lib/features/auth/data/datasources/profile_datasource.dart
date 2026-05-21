@@ -9,4 +9,5 @@ abstract class ProfileDataSource {
   Future<String> uploadProfilePicture({required String filePath});
 
   Future<void> deleteAccount();
+  
 }

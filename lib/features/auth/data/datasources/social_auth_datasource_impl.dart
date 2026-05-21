@@ -65,7 +65,6 @@ class SocialAuthDataSourceImpl implements SocialAuthDataSource {
         OAuthProvider.github,
         'com.yourcompany.authflowapp://callback',
       );
-      print(launched);
       if (!launched) {
         throw ServerException('Failed to signIn with GitHub');
       }
