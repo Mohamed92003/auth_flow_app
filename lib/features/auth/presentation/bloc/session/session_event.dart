@@ -24,3 +24,12 @@ class AuthStateChangedEvent extends SessionEvent {
   @override
   List<Object?> get props => [user];
 }
+
+class UpdateCurrentUserEvent extends SessionEvent {
+  final UserEntity user;
+
+  const UpdateCurrentUserEvent(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}

@@ -23,7 +23,7 @@ class ProfileDataSourceImpl implements ProfileDataSource {
       final updateMetaData = {
         ...currentMetaData ?? {},
         'name': ?displayName,
-        'avatar_url': ?photoUrl,
+        'custom_avatar_url': ?photoUrl,
       };
 
       final response = await _authClient.updateUser(
@@ -42,43 +42,42 @@ class ProfileDataSourceImpl implements ProfileDataSource {
   }
 
   @override
-  Future<String> uploadProfilePicture({required String filePath}) async {
-    try {
-      final userId = _authClient.currentUser!.id;
-      final fileExt = filePath.split('.').last;
+Future<String> uploadProfilePicture({required String filePath}) async {
+  try {
+    final userId = _authClient.currentUser?.id;
+    final fileExt = filePath.split('.').last;
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final uploadPath = '$userId/avatar_$timestamp.$fileExt'; // ✅ unique name
 
-      await _storageClient.uploadFile(
-        bucket: 'avatars',
-        path: '$userId/avatar.$fileExt',
-        file: File(filePath),
-        options: const FileOptions(upsert: true)
-      );
+    await _storageClient.uploadFile(
+      bucket: 'avatars',
+      path: uploadPath,
+      file: File(filePath),
+      options: const FileOptions(upsert: false), // ✅ no need for upsert now
+    );
 
-      final url = await _storageClient.getPublicUrl(
-        bucket: 'avatars',
-        path: '$userId/avatar.$fileExt',
-      );
-      await _authClient.updateUser(
-        UserAttributes(
-          data: {
-            ..._authClient.currentUser?.userMetadata ?? {},
-            'avatar_url': url,
-          },
-        ),
-      );
-      return url;
-    } catch (e) {
-      throw ServerException(
-        'Failed to upload profile picture: ${e.toString()}',
-      );
-    }
+    final url = await _storageClient.getPublicUrl(
+      bucket: 'avatars',
+      path: uploadPath,
+    );
+
+    await _authClient.updateUser(
+      UserAttributes(
+        data: {
+          ..._authClient.currentUser?.userMetadata ?? {},
+          'custom_avatar_url': url,
+        },
+      ),
+    );
+    return url;
+  } catch (e) {
+    throw ServerException('Failed to upload profile picture: ${e.toString()}');
   }
-
+}
   @override
   Future<void> deleteAccount() async {
     try {
-      // TODO: Implement deleteAccount
-      throw UnimplementedError('deleteAccount not implemented yet');
+      await _authClient.deleteAccount();
     } on AuthException {
       rethrow;
     } catch (e) {

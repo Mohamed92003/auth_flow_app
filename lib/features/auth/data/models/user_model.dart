@@ -11,6 +11,7 @@ class UserModel extends UserEntity {
     required super.isEmailVerified,
     required super.createdAt,
   });
+
   factory UserModel.fromSupabaseUser(User user) {
     return UserModel(
       id: user.id,
@@ -19,7 +20,11 @@ class UserModel extends UserEntity {
       createdAt: DateTime.parse(user.createdAt),
       displayName: user.userMetadata?['name'],
       phoneNumber: user.phone,
-      photoUrl: user.userMetadata?['avatar_url'] ?? user.userMetadata?['photo'],
+      // ✅ prefer custom uploaded photo over Google photo
+      photoUrl:
+          user.userMetadata?['custom_avatar_url'] ??
+          user.userMetadata?['avatar_url'] ??
+          user.userMetadata?['photo'],
     );
   }
 

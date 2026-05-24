@@ -13,6 +13,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<SignOutEvent>(_onSignOut);
     on<AuthStateChangedEvent>(_onAuthStateChanged);
+    on<UpdateCurrentUserEvent>(_onUpdateCurrentUser);
 
     _authStateSubscription = sessionRepository.authStateChanges.listen((user) {
       add(AuthStateChangedEvent(user));
@@ -36,7 +37,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   ) async {
     emit(const SessionLoading());
 
-    final result =  sessionRepository.getCurrentUser();
+    final result = sessionRepository.getCurrentUser();
 
     result.fold((failure) => emit(SessionError(message: failure.message)), (
       user,
@@ -67,5 +68,12 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   Future<void> close() {
     _authStateSubscription?.cancel();
     return super.close();
+  }
+
+  void _onUpdateCurrentUser(
+      UpdateCurrentUserEvent event,
+      Emitter<SessionState> emit,
+      ) {
+    emit(Authenticated(user: event.user));
   }
 }

@@ -18,6 +18,7 @@ dependencies:
   flutter_dotenv: ^6.0.0
   pinput: ^6.0.2
   google_sign_in: ^7.2.0
+  shared_preferences: ^2.5.5
 
 
 
@@ -35,6 +36,7 @@ dependencies:
 
   # HTTP
   http: ^1.6.0
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:

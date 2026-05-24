@@ -33,7 +33,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  sl.registerLazySingleton<AuthClient>(() => AuthClientImpl(Supabase.instance.client.auth));
+  sl.registerLazySingleton<AuthClient>(() => AuthClientImpl(Supabase.instance.client.auth , Supabase.instance.client.functions));
 
   sl.registerLazySingleton<StorageClient>(() => StorageClientImpl(Supabase.instance.client.storage));
 

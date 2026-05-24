@@ -34,9 +34,9 @@ class HomePage extends StatelessWidget {
             );
             Navigator.of(context).pushReplacementNamed('/login');
           } else if (state is SessionError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: Colors.red));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            );
           }
         },
         builder: (context, state) {
@@ -45,6 +45,7 @@ class HomePage extends StatelessWidget {
           }
 
           if (state is Authenticated) {
+            print('🏠 Home rebuilt: photoUrl = ${state.user.photoUrl}');
             final user = state.user;
 
             return Center(
@@ -55,17 +56,30 @@ class HomePage extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-                      child: user.photoUrl == null ? const Icon(Icons.person, size: 50) : null,
+                      backgroundImage: user.photoUrl != null
+                          ? NetworkImage(
+                              '${user.photoUrl}?t=${DateTime.now().millisecondsSinceEpoch}',
+                            )
+                          : null,
+                      child: user.photoUrl == null
+                          ? const Icon(Icons.person, size: 50)
+                          : null,
                     ),
                     const SizedBox(height: 24),
-                    Text(user.displayName ?? 'User', style: Theme.of(context).textTheme.headlineSmall),
+                    Text(
+                      user.displayName ?? 'User',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                     const SizedBox(height: 8),
                     Text(user.email, style: Theme.of(context).textTheme.bodyLarge),
                     const SizedBox(height: 8),
                     Chip(
-                      label: Text(user.isEmailVerified ? 'Email Verified' : 'Email Not Verified'),
-                      backgroundColor: user.isEmailVerified ? Colors.green : Colors.orange,
+                      label: Text(
+                        user.isEmailVerified ? 'Email Verified' : 'Email Not Verified',
+                      ),
+                      backgroundColor: user.isEmailVerified
+                          ? Colors.green
+                          : Colors.orange,
                     ),
                     const SizedBox(height: 32),
                     ElevatedButton.icon(

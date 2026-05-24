@@ -3,8 +3,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthClientImpl implements AuthClient {
   final GoTrueClient client;
+  final FunctionsClient functions;
 
-  AuthClientImpl(this.client);
+  AuthClientImpl(this.client, this.functions);
 
   @override
   Future<AuthResponse> signUp({
@@ -12,11 +13,18 @@ class AuthClientImpl implements AuthClient {
     required String password,
     required String name,
   }) {
-    return client.signUp(email: email, password: password, data: {'name': name});
+    return client.signUp(
+      email: email,
+      password: password,
+      data: {'name': name},
+    );
   }
 
   @override
-  Future<AuthResponse> signIn({required String email, required String password}) async {
+  Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  }) async {
     return await client.signInWithPassword(email: email, password: password);
   }
 
@@ -30,7 +38,11 @@ class AuthClientImpl implements AuthClient {
     required String email,
     required String otp,
   }) async {
-    return await client.verifyOTP(email: email, token: otp, type: OtpType.recovery);
+    return await client.verifyOTP(
+      email: email,
+      token: otp,
+      type: OtpType.recovery,
+    );
   }
 
   @override
@@ -39,12 +51,18 @@ class AuthClientImpl implements AuthClient {
   }
 
   @override
-  Future<AuthResponse> signInWithIdToken(OAuthProvider provider, String idToken) async {
+  Future<AuthResponse> signInWithIdToken(
+    OAuthProvider provider,
+    String idToken,
+  ) async {
     return await client.signInWithIdToken(provider: provider, idToken: idToken);
   }
 
   @override
-  Future<bool> signInWithOAuth(OAuthProvider provider, String callbackUrl) async {
+  Future<bool> signInWithOAuth(
+    OAuthProvider provider,
+    String callbackUrl,
+  ) async {
     return await client.signInWithOAuth(
       provider,
       redirectTo: callbackUrl,
@@ -53,17 +71,19 @@ class AuthClientImpl implements AuthClient {
   }
 
   @override
-  Future<void> signInWithOtp({required String phoneNumber}) async{
-   await client.signInWithOtp(phone: phoneNumber);
+  Future<void> signInWithOtp({required String phoneNumber}) async {
+    await client.signInWithOtp(phone: phoneNumber);
   }
 
   @override
-  Future<AuthResponse> verifyOtp({required String phoneNumber,required String otp}) async{
-  return await client.verifyOTP(phone: phoneNumber,type: OtpType.sms);
+  Future<AuthResponse> verifyOtp({
+    required String phoneNumber,
+    required String otp,
+  }) async {
+    return await client.verifyOTP(phone: phoneNumber, type: OtpType.sms);
   }
 
   @override
-
   User? get currentUser => client.currentUser;
 
   @override
@@ -73,10 +93,19 @@ class AuthClientImpl implements AuthClient {
 
   @override
   Stream<AuthState> get authStateChanges => client.onAuthStateChange;
-  
+
   @override
-  Future<UserResponse> updateUser(UserAttributes attributes) async{
-     return await client.updateUser(attributes);
+  Future<UserResponse> updateUser(UserAttributes attributes) async {
+    return await client.updateUser(attributes);
   }
 
+  @override
+  Future<void> deleteAccount() async {
+    final response = await functions.invoke('delete-account');
+    await client.signOut(scope: SignOutScope.global);
+
+    if (response.status != 200) {
+      throw const AuthException('Failed to delete account');
+    }
+  }
 }

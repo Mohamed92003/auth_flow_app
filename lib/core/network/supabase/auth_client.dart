@@ -41,4 +41,6 @@ abstract class AuthClient {
   Stream<AuthState> get authStateChanges;
 
   Future<UserResponse> updateUser(UserAttributes attributes);
+
+  Future<void> deleteAccount();
 }
